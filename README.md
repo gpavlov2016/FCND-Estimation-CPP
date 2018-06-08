@@ -66,21 +66,18 @@ Project outline:
 
 ### Sensor Noise Estimation ###
 
-In this step, simulated noisy sensor data is collected and to estimate the standard deviation of the quad's sensors as follows:
-
-Choose scenario `06_NoisySensors`.  The sensor data is collected on a static quad. You will see two plots at the bottom, one for GPS X position and one for The accelerometer's x measurement.  The dashed lines are a visualization of a single standard deviation from 0 for each signal. The standard deviations are initially set to arbitrary values (after processing the data in the next step, you will be adjusting these values).  If they were set correctly, we should see ~68% of the measurement points fall into the +/- 1 sigma bound.  When you run this scenario, the graphs you see will be recorded to the following csv files with headers: `config/log/Graph1.txt` (GPS X data) and `config/log/Graph2.txt` (Accelerometer X data).
-The standard deviation of the sensor noise was calculated by openning the sensor logs in excel and applying the STDDEV function over all the sequence.
+In this step, we collect simulated noisy sensor data and estimate the standard deviation of the quad's sensors. We are using scenario `06_NoisySensors` in which the quad is static. 
+Runnning this scenario produces two csv files with headers: `config/log/Graph1.txt` (GPS X data) and `config/log/Graph2.txt` (Accelerometer X data).
+We can then open the files in excel and calculate the standard deviation of the sensor noise using the STDDEV function over all the sequence.
 The result is plugged in into the top of `config/6_Sensornoise.txt`.  Specifically, the values for `MeasuredStdDev_GPSPosXY` and `MeasuredStdDev_AccelXY`.
 
 
 ### Attitude Estimation ###
 
-In this step, the complementary filter-type attitude filter with a rate gyro attitude integration is implemented.
-
-Run scenario `07_AttitudeEstimation`.  For this simulation, the only sensor used is the IMU and noise levels are set to 0 (see `config/07_AttitudeEstimation.txt` for all the settings for this simulation).  There are two plots visible in this simulation.
+Attitude estimate is done using complementary filter with a rate gyro attitude integration. We test the attitude estimation using scenario `07_AttitudeEstimation`.  For this simulation, the only sensor used is the IMU and noise levels are set to 0 (see `config/07_AttitudeEstimation.txt` for all the settings for this simulation).  There are two plots visible in this simulation.
    - The top graph is showing errors in each of the estimated Euler angles.
    - The bottom shows the true Euler angles and the estimates.
-In `QuadEstimatorEKF.cpp`, the function `UpdateFromIMU()` contains a complementary filter-type attitude filter. This is done by converting the current Euler angles of pitch, roll and yaw to quaternion representation and integrating the body fram gyro measurement with respect to the quaternion representation of the current attitude.
+In `QuadEstimatorEKF.cpp`, the function `UpdateFromIMU()` contains the implementation of the attitude complementary filter. The function converts the current Euler angles of pitch, roll and yaw to quaternion representation and integrates the body frame gyro measurement with respect to the quaternion representation of the current attitude.
 
 ![attitude example](images/attitude-screenshot.png)
 
